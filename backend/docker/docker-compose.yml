@@ -1,0 +1,11 @@
+version: '2.1'
+services:
+  mongodb:
+    image: mongo:4.2
+    volumes:
+      - mongo-sangria-data:/data/db
+    ports:
+      - "27017:27017"
+    container_name: "mongo-sangria"
+volumes:
+  mongo-sangria-data:
