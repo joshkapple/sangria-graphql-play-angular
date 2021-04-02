@@ -1,5 +1,6 @@
 package hero
 
+import mongo.MongoObjectId
 import reactivemongo.api.bson.BSONObjectID
 
 object Episode extends Enumeration {
@@ -27,10 +28,12 @@ case class Droid(
                   appearsIn: List[Episode.Value],
                   primaryFunction: Option[String]) extends Character
 
-case class Jedi(id: BSONObjectID, stringId: String, name: Option[String],
+case class Jedi(_id: MongoObjectId, name: Option[String],
                 friends: List[String],
                 appearsIn: List[Episode.Value],
-                primaryFunction: Option[String]) extends Character
+                primaryFunction: Option[String]) extends Character {
+  val stringId = _id.$oid
+}
 
 class CharacterRepo {
   import CharacterRepo._

@@ -119,6 +119,8 @@ class Schema @Inject()(){
 
   val ID = Argument("id", StringType, description = "id of the character")
 
+  val name = Argument("name", StringType, description = "name of the character")
+
   val EpisodeArg = Argument("episode", OptionInputType(EpisodeEnum),
     description = "If omitted, returns the hero of the whole saga. If provided, returns the hero of that particular episode.")
 
@@ -134,9 +136,9 @@ class Schema @Inject()(){
       Field("droid", Droid,
         arguments = ID :: Nil,
         resolve = Projector((ctx, f) => ctx.ctx.characterRepo.getDroid(ctx arg ID).get)),
-      Field("jedi", Jedi,
-        arguments = ID :: Nil,
-        resolve = Projector((ctx, f) => ctx.ctx.jediService.findByName(ctx arg ID).map(_.get)))
+      Field("jedi", OptionType(Jedi),
+        arguments = name :: Nil,
+        resolve = Projector((ctx, f) => ctx.ctx.jediService.findByName(ctx arg name)))
     ))
 
   val StarWarsSchema = Schema(Query)

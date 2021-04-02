@@ -1,15 +1,21 @@
 package mongo
 import hero.{Episode, Jedi}
-import hero.Episode.EMPIRE
-import reactivemongo.api.bson._
+import reactivemongo.api.bson.Macros
+import _root_.play.api.libs.json._
+import _root_.reactivemongo.api.bson._
 import reactivemongo.play.json.compat._
-import bson2json._
-import play.api.libs.json.{Json, Reads, Writes}
-import reactivemongo.play.json.compat.json2bson.{toDocumentReader, toDocumentWriter}
+import reactivemongo.play.json._
+import collection._
+import json2bson._
+
 
 object Serializers {
-  import reactivemongo.play.json._, collection._
+  import reactivemongo.play.json.compat.json2bson.{toDocumentReader, toDocumentWriter}
 
-  implicit val episodeFormat = Json.formatEnum(Episode)
-  implicit val jediFormat = Json.format[Jedi]
+  implicit def mongoObjectId2BSONObjectId(oid: MongoObjectId): BSONObjectID = BSONObjectID.parse(oid.$oid).get
+  implicit def bsonObjectId2MongoObjectId(oid: BSONObjectID): MongoObjectId = MongoObjectId(oid.stringify)
+
+  implicit val mongoObjectIdFormat: OFormat[MongoObjectId] = Json.format[MongoObjectId]
+  implicit val episodeFormat: Format[Episode.Value] = Json.formatEnum(Episode)
+  implicit val jediFormat: OFormat[Jedi] = Json.format[Jedi]
 }
