@@ -1,7 +1,6 @@
 package hero
 
 import mongo.{MongoCollectionService, MongoIndexCreator}
-import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{Json, OWrites}
 import play.modules.reactivemongo.ReactiveMongoApi
 import mongo.Serializers._
@@ -9,7 +8,8 @@ import reactivemongo.api.bson.collection.BSONCollection
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import reactivemongo.api.bson.{BSONDocument, BSONObjectID}
-import reactivemongo.play.json.compat.json2bson.{toDocumentReader, toDocumentWriter}
+import reactivemongo.play.json.compat._
+import json2bson._
 
 @Singleton
 class JediService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit val executionContext: ExecutionContext)
@@ -31,7 +31,7 @@ class JediService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit val
   def findByName(name: String): Future[Option[Jedi]] = {
     withCollection(collection(collectionName)) { c =>
       for {
-        result <- c.find(BSONDocument("name" -> name)).one[Jedi]
+        result <- c.find(Json.obj("name" -> name)).one[Jedi]
       } yield result
     }
   }

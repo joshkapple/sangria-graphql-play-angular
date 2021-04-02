@@ -1,6 +1,7 @@
 package graphql
 
 import hero.{Droid, Episode, Human, Jedi}
+import mongo.MongoObjectId
 import play.modules.reactivemongo.ReactiveMongoApi
 
 import javax.inject.{Inject, Singleton}
@@ -9,6 +10,7 @@ import sangria.schema.{Argument, EnumType, EnumValue, Field, InterfaceType, List
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import sangria.macros.derive._
 
 @Singleton
 class Schema @Inject()(){
@@ -102,19 +104,14 @@ class Schema @Inject()(){
         resolve = _.value.primaryFunction)
     ))
 
-  val Jedi = ObjectType(
-    "Jedi",
-    "A badass",
-    interfaces[ApiRepo, Jedi](Character),
-    fields[ApiRepo, Jedi](
-      Field("id", StringType,
-        Some("The id of the jedi."),
-        tags = ProjectionName("_id") :: Nil,
-        resolve = _.value.stringId),
-      Field("name", OptionType(StringType),
-        Some("The name of the jedi."),
-        resolve = ctx => Future.successful(ctx.value.name)),
-    )
+  implicit val episodeFieldType: EnumType[Episode.Value] = deriveEnumType[Episode.Value]()
+  implicit val mongoFieldType: ObjectType[Unit, MongoObjectId] = deriveObjectType[Unit, MongoObjectId](
+    RenameField("$oid", "id")
+  )
+
+  val Jedi = deriveObjectType[ApiRepo, Jedi](
+    ObjectTypeName("Jedi"),
+    ObjectTypeDescription("")
   )
 
   val ID = Argument("id", StringType, description = "id of the character")
