@@ -19,13 +19,15 @@ class JediService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(implicit val
   val collectionName: String = "jedi"
 
   def create(name: String) = {
-    val newJedi =
+    val newJedi = {
       Jedi(BSONObjectID.generate(), Some(name), friends = Nil, appearsIn = Nil, primaryFunction = None)
+    }
+    println(newJedi)
     insert(newJedi)
   }
 
   def findByName(name: String): Future[Option[Jedi]] = {
-    withServiceCollection { c: BSONCollection =>
+    collection { c: BSONCollection =>
       for { _ <- create(name)
         result <- c.find(Json.obj("name" -> name)).one[Jedi]
       } yield result

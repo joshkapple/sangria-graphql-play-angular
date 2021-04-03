@@ -11,9 +11,9 @@ abstract class MongoIndexCreator(val reactiveMongoApi: ReactiveMongoApi)(implici
   val service: SingleMongoCollectionService[_]
   lazy val collectionName: String = service.collectionName
 
-  def index(name: String): Index.Aux[BSONSerializationPack.type] =
+  def index(name: String, key: Seq[(String, IndexType)]): Index.Aux[BSONSerializationPack.type] =
     Index(BSONSerializationPack)(
-      key = Seq(s"$name-key" -> IndexType.Ascending),
+      key = key,
       name = Some(name),
       unique = true,
       background = false,
@@ -37,14 +37,14 @@ abstract class MongoIndexCreator(val reactiveMongoApi: ReactiveMongoApi)(implici
     )
 
   def run() = {
-    service.withServiceCollection(c => {
+    service.collection(c => {
       for {db <- reactiveMongoApi.database
            _ = println(db.connection)
            _ <- db.collectionNames.flatMap {collections =>
              if (!collections.contains(collectionName)){
                println(s"creating ${collectionName}")
-               c.indexesManager.create(index(collectionName))
-               c.indexesManager.ensure(index(collectionName))
+               c.indexesManager.create(index(collectionName, Seq(("_id", IndexType.Ascending))))
+               c.indexesManager.ensure(index(collectionName, Seq(("_id", IndexType.Ascending))))
              } else {
                Future.successful(())
              }

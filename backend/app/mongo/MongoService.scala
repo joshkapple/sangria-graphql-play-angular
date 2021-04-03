@@ -28,9 +28,7 @@ trait MongoService {
 trait SingleMongoCollectionService[T] extends MongoService {
   val collectionName: String
 
-  implicit def collection[T]: Future[BSONCollection] = collection(collectionName)
-
-  def withServiceCollection[T](f: BSONCollection => Future[T]) = withCollection(collection(collectionName))(f)
+  def collection[T](f: BSONCollection => Future[T]): Future[T] = withCollection(collection(collectionName))(f)
 
   def insert(t: T)(implicit writesT: Writer[T]): Future[WriteResult] = withCollection(collection(collectionName))(c => c.insert.one[T](t))
 }
