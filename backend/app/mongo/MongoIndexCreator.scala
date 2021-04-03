@@ -7,10 +7,9 @@ import reactivemongo.api.indexes.{Index, IndexType}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class MongoIndexCreator(val reactiveMongoApi: ReactiveMongoApi)(implicit executionContext: ExecutionContext) extends MongoCollectionService {
-
-  val collectionName: String
-  implicit def collection: Future[BSONCollection]
+abstract class MongoIndexCreator(val reactiveMongoApi: ReactiveMongoApi)(implicit executionContext: ExecutionContext) extends MongoService {
+  val service: SingleMongoCollectionService[_]
+  lazy val collectionName: String = service.collectionName
 
   def index(name: String): Index.Aux[BSONSerializationPack.type] =
     Index(BSONSerializationPack)(
@@ -38,7 +37,7 @@ abstract class MongoIndexCreator(val reactiveMongoApi: ReactiveMongoApi)(implici
     )
 
   def run() = {
-    withCollection(collection(collectionName))(c => {
+    service.withServiceCollection(c => {
       for {db <- reactiveMongoApi.database
            _ = println(db.connection)
            _ <- db.collectionNames.flatMap {collections =>
