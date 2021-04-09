@@ -1,97 +1,103 @@
 package hero
 
+import jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType
 import mongo.MongoObjectId
 import reactivemongo.api.bson.BSONObjectID
+import mongo.Serializers._
 
 object Episode extends Enumeration {
   val NEWHOPE, EMPIRE, JEDI = Value
 }
 
-trait Character {
-  def stringId: String
+object CharacterType extends Enumeration {
+  val Human, Droid, Jedi = Value
+}
+
+sealed trait Character {
+  val characterType: CharacterType.Value
+  def id: MongoObjectId
   def name: Option[String]
-  def friends: List[String]
+  def friends: List[MongoObjectId]
   def appearsIn: List[Episode.Value]
 }
 
-case class Human(
-                  stringId: String,
-                  name: Option[String],
-                  friends: List[String],
-                  appearsIn: List[Episode.Value],
-                  homePlanet: Option[String]) extends Character
-
-case class Droid(
-                  stringId: String,
-                  name: Option[String],
-                  friends: List[String],
-                  appearsIn: List[Episode.Value],
-                  primaryFunction: Option[String]) extends Character
-
-case class Jedi(_id: MongoObjectId, name: Option[String],
-                friends: List[String],
-                appearsIn: List[Episode.Value],
-                primaryFunction: Option[String]) extends Character {
-  val stringId = _id.$oid
+case class Human(id: MongoObjectId,
+                 name: Option[String],
+                 friends: List[MongoObjectId],
+                 appearsIn: List[Episode.Value],
+                 homePlanet: Option[String])
+    extends Character {
+  override val characterType = CharacterType.Human
 }
 
-class CharacterRepo {
-  import CharacterRepo._
+case class Droid(id: MongoObjectId,
+                 name: Option[String],
+                 friends: List[MongoObjectId],
+                 appearsIn: List[Episode.Value],
+                 primaryFunction: Option[String])
+    extends Character {
+  override val characterType = CharacterType.Droid
+}
 
-  def getHero(episode: Option[Episode.Value]) =
-    episode flatMap (_ => getHuman("1000")) getOrElse droids.last
-
-  def getHuman(id: String): Option[Human] = humans.find(c => c.stringId == id)
-
-  def getDroid(id: String): Option[Droid] = droids.find(c => c.stringId == id)
+case class Jedi(id: MongoObjectId,
+                name: Option[String],
+                friends: List[MongoObjectId],
+                appearsIn: List[Episode.Value],
+                primaryFunction: Option[String])
+    extends Character {
+  override val characterType = CharacterType.Jedi
 }
 
 object CharacterRepo {
-  val humans = List(
+  def loadHumans() = List(
     Human(
-      stringId = "1000",
+      id = BSONObjectID.generate(),
       name = Some("Luke Skywalker"),
-      friends = List("1002", "1003", "2000", "2001"),
+      friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
-      homePlanet = Some("Tatooine")),
+      homePlanet = Some("Tatooine")
+    ),
     Human(
-      stringId = "1001",
+      id = BSONObjectID.generate(),
       name = Some("Darth Vader"),
-      friends = List("1004"),
+      friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
       homePlanet = Some("Tatooine")),
     Human(
-      stringId = "1002",
+      id = BSONObjectID.generate(),
       name = Some("Han Solo"),
-      friends = List("1000", "1003", "2001"),
+      friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
       homePlanet = None),
     Human(
-      stringId = "1003",
+      id = BSONObjectID.generate(),
       name = Some("Leia Organa"),
-      friends = List("1000", "1002", "2000", "2001"),
+      friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
-      homePlanet = Some("Alderaan")),
+      homePlanet = Some("Alderaan")
+    ),
     Human(
-      stringId = "1004",
+      id = BSONObjectID.generate(),
       name = Some("Wilhuff Tarkin"),
-      friends = List("1001"),
+      friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
       homePlanet = None)
   )
 
-  val droids = List(
+  def loadDroids() = List(
     Droid(
-      stringId = "2000",
+      id = BSONObjectID.generate(),
       name = Some("C-3PO"),
-      friends = List("1000", "1002", "1003", "2001"),
+      friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
-      primaryFunction = Some("Protocol")),
+      primaryFunction = Some("Protocol")
+    ),
     Droid(
-      stringId = "2001",
+      id = BSONObjectID.generate(),
       name = Some("R2-D2"),
-      friends = List("1000", "1002", "1003"),
+      friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
-      primaryFunction = Some("Astromech"))
+      primaryFunction = Some("Astromech")
+    )
   )
 }
