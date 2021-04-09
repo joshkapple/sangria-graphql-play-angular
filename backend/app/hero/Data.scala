@@ -15,13 +15,13 @@ object CharacterType extends Enumeration {
 
 sealed trait Character {
   val characterType: CharacterType.Value
-  def id: MongoObjectId
+  def _id: MongoObjectId
   def name: Option[String]
   def friends: List[MongoObjectId]
   def appearsIn: List[Episode.Value]
 }
 
-case class Human(id: MongoObjectId,
+case class Human(_id: MongoObjectId,
                  name: Option[String],
                  friends: List[MongoObjectId],
                  appearsIn: List[Episode.Value],
@@ -30,7 +30,7 @@ case class Human(id: MongoObjectId,
   override val characterType = CharacterType.Human
 }
 
-case class Droid(id: MongoObjectId,
+case class Droid(_id: MongoObjectId,
                  name: Option[String],
                  friends: List[MongoObjectId],
                  appearsIn: List[Episode.Value],
@@ -39,7 +39,7 @@ case class Droid(id: MongoObjectId,
   override val characterType = CharacterType.Droid
 }
 
-case class Jedi(id: MongoObjectId,
+case class Jedi(_id: MongoObjectId,
                 name: Option[String],
                 friends: List[MongoObjectId],
                 appearsIn: List[Episode.Value],
@@ -51,33 +51,33 @@ case class Jedi(id: MongoObjectId,
 object CharacterRepo {
   def loadHumans() = List(
     Human(
-      id = BSONObjectID.generate(),
+      _id = BSONObjectID.generate(),
       name = Some("Luke Skywalker"),
       friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
       homePlanet = Some("Tatooine")
     ),
     Human(
-      id = BSONObjectID.generate(),
+      _id = BSONObjectID.generate(),
       name = Some("Darth Vader"),
       friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
       homePlanet = Some("Tatooine")),
     Human(
-      id = BSONObjectID.generate(),
+      _id = BSONObjectID.generate(),
       name = Some("Han Solo"),
       friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
       homePlanet = None),
     Human(
-      id = BSONObjectID.generate(),
+      _id = BSONObjectID.generate(),
       name = Some("Leia Organa"),
       friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
       homePlanet = Some("Alderaan")
     ),
     Human(
-      id = BSONObjectID.generate(),
+      _id = BSONObjectID.generate(),
       name = Some("Wilhuff Tarkin"),
       friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
@@ -86,14 +86,14 @@ object CharacterRepo {
 
   def loadDroids() = List(
     Droid(
-      id = BSONObjectID.generate(),
+      _id = BSONObjectID.generate(),
       name = Some("C-3PO"),
       friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),
       primaryFunction = Some("Protocol")
     ),
     Droid(
-      id = BSONObjectID.generate(),
+      _id = BSONObjectID.generate(),
       name = Some("R2-D2"),
       friends = Nil,
       appearsIn = List(Episode.NEWHOPE, Episode.EMPIRE, Episode.JEDI),

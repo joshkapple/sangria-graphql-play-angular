@@ -1,10 +1,10 @@
 package mongo
 
 import com.google.inject.AbstractModule
-import hero.JediIndexCreator
+import hero.CharacterIndexCreator
 
 class MongoIndexModule extends AbstractModule {
   override def configure() = {
-    bind(classOf[JediIndexCreator]).asEagerSingleton()
+    bind(classOf[CharacterIndexCreator]).asEagerSingleton()
   }
 }

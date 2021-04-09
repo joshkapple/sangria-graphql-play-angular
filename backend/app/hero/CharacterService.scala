@@ -47,16 +47,16 @@ class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
 
   def byIds(ids: Seq[MongoObjectId]): Future[List[Character]] = {
     collection { c =>
-      c.find(Json.obj("id" -> Json.obj("$in" -> ids))).cursor[Character]().collect[List](Int.MaxValue, Cursor.FailOnError[List[Character]]())
+      c.find(Json.obj("_id" -> Json.obj("$in" -> ids))).cursor[Character]().collect[List](Int.MaxValue, Cursor.FailOnError[List[Character]]())
     }
   }
 
-  def getHuman(id: String): Future[Option[Human]] = Future{None}
-  def getDroid(id: String): Future[Option[Droid]] = Future{None}
-  def getJedi(id: String): Future[Option[Jedi]] = Future{None}
+  def getHuman(id: MongoObjectId): Future[Option[Human]] = Future{None}
+  def getDroid(id: MongoObjectId): Future[Option[Droid]] = Future{None}
+  def getJedi(id: MongoObjectId): Future[Option[Jedi]] = Future{None}
 }
 
 @Singleton
-class JediIndexCreator @Inject()(val service: CharacterService, reactiveMongoApi: ReactiveMongoApi)(
+class CharacterIndexCreator @Inject()(val service: CharacterService, reactiveMongoApi: ReactiveMongoApi)(
     implicit val executionContext: ExecutionContext)
     extends MongoIndexCreator(reactiveMongoApi)
