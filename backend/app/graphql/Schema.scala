@@ -1,6 +1,6 @@
 package graphql
 
-import hero.{CharacterType, Droid, Episode, Human, Jedi}
+import character.{CharacterType, Droid, Episode, Human, Jedi}
 import mongo.MongoObjectId
 
 import javax.inject.{Inject, Singleton}
@@ -39,12 +39,12 @@ class Schema @Inject()() {
       EnumValue("Jedi", value = CharacterType.Jedi)
   ))
 
-  val Character: InterfaceType[ApiRepo, hero.Character] =
+  val Character: InterfaceType[ApiRepo, character.Character] =
     InterfaceType(
       "Character",
       "A character in the Star Wars Trilogy!!!",
       () =>
-        fields[ApiRepo, hero.Character](
+        fields[ApiRepo, character.Character](
           Field("id", IDType, Some("The id of the character."), resolve = _.value._id.$oid),
           Field("name", OptionType(StringType), Some("The name of the character."), resolve = _.value.name),
           Field(

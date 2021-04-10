@@ -1,4 +1,4 @@
-package hero
+package character
 
 import mongo.MongoObjectId
 import reactivemongo.api.bson.BSONObjectID

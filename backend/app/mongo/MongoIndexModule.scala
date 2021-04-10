@@ -1,7 +1,7 @@
 package mongo
 
 import com.google.inject.AbstractModule
-import hero.CharacterIndexCreator
+import character.CharacterIndexCreator
 
 class MongoIndexModule extends AbstractModule {
   override def configure() = {

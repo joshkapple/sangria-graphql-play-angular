@@ -1,6 +1,6 @@
 package graphql
 
-import hero.{CharacterRepo, CharacterService}
+import character.{CharacterRepo, CharacterService}
 
 import javax.inject.{Inject, Singleton}
 

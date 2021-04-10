@@ -1,5 +1,5 @@
 package mongo
-import hero.{CharacterType, Droid, Episode, Human, Jedi, Character}
+import character.{CharacterType, Droid, Episode, Human, Jedi, Character}
 import play.api.libs.json._
 import reactivemongo.api.bson.{BSONDocumentHandler, BSONDocumentWriter, BSONHandler, BSONObjectID, Macros}
 import reactivemongo.play.json.compat._

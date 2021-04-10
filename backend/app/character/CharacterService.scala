@@ -1,4 +1,4 @@
-package hero
+package character
 
 import mongo.{MongoIndexCreator, MongoObjectId, MongoService, SingleMongoCollectionService}
 import play.api.libs.json.{Json, OFormat, OWrites, Reads}
@@ -42,15 +42,15 @@ class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
   def byIdAndType(id: MongoObjectId, characterType: CharacterType.Value): Future[Option[Character]] = {
     println(id)
     characterType match {
-      case CharacterType.Jedi => byIdAndType(id, hero.Jedi.getClass)
-      case CharacterType.Droid => byIdAndType(id, hero.Droid.getClass)
-      case CharacterType.Human => byIdAndType(id, hero.Human.getClass)
+      case CharacterType.Jedi => byIdAndType(id, character.Jedi.getClass)
+      case CharacterType.Droid => byIdAndType(id, character.Droid.getClass)
+      case CharacterType.Human => byIdAndType(id, character.Human.getClass)
     }
   }
 
-  def getHuman(id: MongoObjectId): Future[Option[Human]] = byIdAndType(id, hero.Human.getClass).map(_.map(_.asInstanceOf[Human]))
-  def getDroid(id: MongoObjectId): Future[Option[Droid]] = byIdAndType(id, hero.Droid.getClass).map(_.map(_.asInstanceOf[Droid]))
-  def getJedi(id: MongoObjectId): Future[Option[Jedi]] = byIdAndType(id, hero.Jedi.getClass).map(_.map(_.asInstanceOf[Jedi]))
+  def getHuman(id: MongoObjectId): Future[Option[Human]] = byIdAndType(id, character.Human.getClass).map(_.map(_.asInstanceOf[Human]))
+  def getDroid(id: MongoObjectId): Future[Option[Droid]] = byIdAndType(id, character.Droid.getClass).map(_.map(_.asInstanceOf[Droid]))
+  def getJedi(id: MongoObjectId): Future[Option[Jedi]] = byIdAndType(id, character.Jedi.getClass).map(_.map(_.asInstanceOf[Jedi]))
 }
 
 @Singleton
