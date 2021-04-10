@@ -1,23 +1,24 @@
 package hero
 
 import mongo.{MongoIndexCreator, MongoObjectId, MongoService, SingleMongoCollectionService}
-import play.api.libs.json.{Json, OFormat, OWrites}
+import play.api.libs.json.{Json, OFormat, OWrites, Reads}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.bson.collection.BSONCollection
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import mongo.Serializers._
-import reactivemongo.api.Cursor
 import reactivemongo.api.bson.BSONObjectID
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.play.json.compat._,
-json2bson.{ toDocumentReader, toDocumentWriter }
+import reactivemongo.play.json.compat._
+import json2bson.{toDocumentReader, toDocumentWriter}
+import reactivemongo.api.bson.collection.BSONSerializationPack.Reader
 
 @Singleton
 class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
     implicit val executionContext: ExecutionContext)
     extends SingleMongoCollectionService[Character] {
   val collectionName: String = "character"
+  override def readsT: Reads[Character] = implicitly
+  override def readerT: Reader[Character] = implicitly
 
   def create(name: String, characterType: CharacterType.Value): Future[Character] = {
     val newCharacter = characterType match {
@@ -30,23 +31,11 @@ class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
     insert(newCharacter).map(_ => newCharacter)
   }
 
-  def all(): Future[List[Character]] = {
-    collection {c =>
-      c.find(Json.obj()).cursor[Character]().collect[List](Int.MaxValue, Cursor.FailOnError[List[Character]]())
-    }
-  }
-
   def jediByName(name: String): Future[Option[Jedi]] = {
     collection { c: BSONCollection =>
       for {
-        result <- c.find(Json.obj("name" -> name, "_type" -> "hero.Jedi")).one[Jedi]
+        result <- c.find(Json.obj("name" -> name, withClassType(Jedi.getClass))).one[Jedi]
       } yield result
-    }
-  }
-
-  def byIds(ids: Seq[MongoObjectId]): Future[List[Character]] = {
-    collection { c =>
-      c.find(Json.obj("_id" -> Json.obj("$in" -> ids))).cursor[Character]().collect[List](Int.MaxValue, Cursor.FailOnError[List[Character]]())
     }
   }
 
@@ -57,11 +46,6 @@ class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
       case CharacterType.Droid => byIdAndType(id, hero.Droid.getClass)
       case CharacterType.Human => byIdAndType(id, hero.Human.getClass)
     }
-  }
-
-  def byIdAndType(id: MongoObjectId, classOf: Class[_]): Future[Option[Character]] =  {
-    collection { c =>
-      c.find(Json.obj("_id" -> id, "_type" -> classOf.getName.replace("$", ""))).one[Character]}
   }
 
   def getHuman(id: MongoObjectId): Future[Option[Human]] = byIdAndType(id, hero.Human.getClass).map(_.map(_.asInstanceOf[Human]))

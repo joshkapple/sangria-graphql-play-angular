@@ -166,7 +166,7 @@ class Schema @Inject()() {
 
   val name = Argument("name", StringType, description = "name of the character")
 
-  val MongoObjectIdType = Argument("oid", StringType, description = "mongobjectid")
+  val MongoObjectIdType = Argument("id", StringType, description = "Mongo ObjectId")
 
   val EpisodeArg = Argument(
     "episode",
@@ -199,6 +199,11 @@ class Schema @Inject()() {
         OptionType(Jedi),
         arguments = MongoObjectIdType :: Nil,
         resolve = ctx => ctx.ctx.cs.getJedi(MongoObjectId(ctx.arg(MongoObjectIdType)))),
+      Field(
+        "jediByName",
+        OptionType(Jedi),
+        arguments = name :: Nil,
+        resolve = ctx => ctx.ctx.cs.jediByName(ctx.arg(name))),
     )
   )
 
