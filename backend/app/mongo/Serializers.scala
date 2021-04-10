@@ -10,6 +10,8 @@ import play.api.libs.json.Json
 import reactivemongo.play.json.compat._
 
 object Serializers {
+  implicit val cfg = JsonConfiguration(typeNaming = JsonNaming{fullName => fullName.substring(fullName.lastIndexOf(".") + 1)}) // Strip fully qualified name to just the class name
+
   implicit def mongoObjectId2BSONObjectId(oid: MongoObjectId): BSONObjectID = BSONObjectID.parse(oid.$oid).get
   implicit def bsonObjectId2MongoObjectId(oid: BSONObjectID): MongoObjectId = MongoObjectId(oid.stringify)
 

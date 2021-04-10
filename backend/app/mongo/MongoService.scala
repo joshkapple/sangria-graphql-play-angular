@@ -58,5 +58,5 @@ trait SingleMongoCollectionService[T] extends MongoService {
       c.find(Json.obj("_id" -> id, withClassType(classOf))).one[T]}
   }
 
-  def withClassType(classOf: Class[_]) = ("_type" -> Json.toJsFieldJsValueWrapper(classOf.getName.replace("$", "")))
+  def withClassType(classOf: Class[_]) = ("_type" -> Json.toJsFieldJsValueWrapper(classOf.getSimpleName.replace("$", "")))
 }
