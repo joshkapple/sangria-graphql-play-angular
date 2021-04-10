@@ -19,7 +19,7 @@ class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
     extends SingleMongoCollectionService[Character] {
   val collectionName: String = "character"
 
-  def create(name: String, characterType: CharacterType.Value = CharacterType.Jedi): Future[WriteResult] = {
+  def create(name: String, characterType: CharacterType.Value): Future[Character] = {
     val newCharacter = characterType match {
       case CharacterType.Jedi =>
         Jedi(BSONObjectID.generate(), Some(name), friends = Nil, appearsIn = Nil, primaryFunction = None)
@@ -27,7 +27,7 @@ class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
       case CharacterType.Droid =>
         Droid(BSONObjectID.generate(), Some(name), friends = Nil, appearsIn = Nil, primaryFunction = None)
     }
-    insert(newCharacter)
+    insert(newCharacter).map(_ => newCharacter)
   }
 
   def all(): Future[List[Character]] = {
@@ -39,7 +39,6 @@ class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
   def jediByName(name: String): Future[Option[Jedi]] = {
     collection { c: BSONCollection =>
       for {
-        _ <- create(name)
         result <- c.find(Json.obj("name" -> name, "_type" -> "hero.Jedi")).one[Jedi]
       } yield result
     }
@@ -51,9 +50,23 @@ class CharacterService @Inject()(val reactiveMongoApi: ReactiveMongoApi)(
     }
   }
 
-  def getHuman(id: MongoObjectId): Future[Option[Human]] = Future{None}
-  def getDroid(id: MongoObjectId): Future[Option[Droid]] = Future{None}
-  def getJedi(id: MongoObjectId): Future[Option[Jedi]] = Future{None}
+  def byIdAndType(id: MongoObjectId, characterType: CharacterType.Value): Future[Option[Character]] = {
+    println(id)
+    characterType match {
+      case CharacterType.Jedi => byIdAndType(id, hero.Jedi.getClass)
+      case CharacterType.Droid => byIdAndType(id, hero.Droid.getClass)
+      case CharacterType.Human => byIdAndType(id, hero.Human.getClass)
+    }
+  }
+
+  def byIdAndType(id: MongoObjectId, classOf: Class[_]): Future[Option[Character]] =  {
+    collection { c =>
+      c.find(Json.obj("_id" -> id, "_type" -> classOf.getName.replace("$", ""))).one[Character]}
+  }
+
+  def getHuman(id: MongoObjectId): Future[Option[Human]] = byIdAndType(id, hero.Human.getClass).map(_.map(_.asInstanceOf[Human]))
+  def getDroid(id: MongoObjectId): Future[Option[Droid]] = byIdAndType(id, hero.Droid.getClass).map(_.map(_.asInstanceOf[Droid]))
+  def getJedi(id: MongoObjectId): Future[Option[Jedi]] = byIdAndType(id, hero.Jedi.getClass).map(_.map(_.asInstanceOf[Jedi]))
 }
 
 @Singleton

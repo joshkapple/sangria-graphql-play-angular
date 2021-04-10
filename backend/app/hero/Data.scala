@@ -1,6 +1,5 @@
 package hero
 
-import jdk.nashorn.internal.runtime.regexp.joni.encoding.CharacterType
 import mongo.MongoObjectId
 import reactivemongo.api.bson.BSONObjectID
 import mongo.Serializers._
@@ -14,7 +13,6 @@ object CharacterType extends Enumeration {
 }
 
 sealed trait Character {
-  val characterType: CharacterType.Value
   def _id: MongoObjectId
   def name: Option[String]
   def friends: List[MongoObjectId]
@@ -27,7 +25,6 @@ case class Human(_id: MongoObjectId,
                  appearsIn: List[Episode.Value],
                  homePlanet: Option[String])
     extends Character {
-  override val characterType = CharacterType.Human
 }
 
 case class Droid(_id: MongoObjectId,
@@ -36,7 +33,6 @@ case class Droid(_id: MongoObjectId,
                  appearsIn: List[Episode.Value],
                  primaryFunction: Option[String])
     extends Character {
-  override val characterType = CharacterType.Droid
 }
 
 case class Jedi(_id: MongoObjectId,
@@ -45,7 +41,6 @@ case class Jedi(_id: MongoObjectId,
                 appearsIn: List[Episode.Value],
                 primaryFunction: Option[String])
     extends Character {
-  override val characterType = CharacterType.Jedi
 }
 
 object CharacterRepo {

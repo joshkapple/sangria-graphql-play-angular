@@ -15,7 +15,6 @@ object Serializers {
 
   implicit val mongoObjectIdFormat: OFormat[MongoObjectId] = Json.format[MongoObjectId]
   implicit val episodeFormat: Format[Episode.Value] = Json.formatEnum(Episode)
-  implicit val characterTypeFormat: Format[CharacterType.Value] = Json.formatEnum(CharacterType)
 
   implicit val jediFormat: OFormat[Jedi] = Json.format[Jedi]
   implicit val humanFormat: OFormat[Human] = Json.format[Human]

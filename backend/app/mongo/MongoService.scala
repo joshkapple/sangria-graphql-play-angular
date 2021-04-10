@@ -2,7 +2,6 @@ package mongo
 
 import play.libs.Json
 import play.modules.reactivemongo.ReactiveMongoApi
-
 import scala.concurrent.{ExecutionContext, Future}
 import mongo.Serializers._
 import reactivemongo.api.bson.collection.BSONCollection

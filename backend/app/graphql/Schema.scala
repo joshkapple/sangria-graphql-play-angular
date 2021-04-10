@@ -1,27 +1,12 @@
 package graphql
 
-import hero.{Droid, Episode, Human, Jedi}
+import hero.{CharacterType, Droid, Episode, Human, Jedi}
 import mongo.MongoObjectId
+
 import javax.inject.{Inject, Singleton}
 import sangria.execution.deferred.{Fetcher, HasId}
-import sangria.schema.{
-  Argument,
-  EnumType,
-  EnumValue,
-  Field,
-  IDType,
-  InterfaceType,
-  ListType,
-  ObjectType,
-  OptionInputType,
-  OptionType,
-  ProjectionName,
-  Projector,
-  Schema,
-  StringType,
-  fields,
-  interfaces
-}
+import sangria.schema.{Argument, EnumType, EnumValue, Field, IDType, InterfaceType, ListType, ObjectType, OptionInputType, OptionType, ProjectionName, Projector, Schema, StringType, UpdateCtx, fields, interfaces}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import sangria.macros.derive._
@@ -49,9 +34,9 @@ class Schema @Inject()() {
     "CharacterType",
     Some("Sub type of the character"),
     List(
-      EnumValue("Droid", value = hero.CharacterType.Droid),
-      EnumValue("Human", value = hero.CharacterType.Human),
-      EnumValue("Jedi", value = hero.CharacterType.Jedi)
+      EnumValue("Droid", value = CharacterType.Droid),
+      EnumValue("Human", value = CharacterType.Human),
+      EnumValue("Jedi", value = CharacterType.Jedi)
   ))
 
   val Character: InterfaceType[ApiRepo, hero.Character] =
@@ -73,13 +58,8 @@ class Schema @Inject()() {
             "appearsIn",
             OptionType(ListType(OptionType(EpisodeEnum))),
             Some("Which movies they appear in."),
-            resolve = _.value.appearsIn map (e => Some(e))),
-          Field(
-            "characterType",
-            CharacterEnum,
-            Some("Which movies they appear in."),
-            resolve = _.value.characterType))
-    )
+            resolve = _.value.appearsIn map (e => Some(e)))
+    ))
 
   val Human =
     ObjectType(
@@ -186,6 +166,8 @@ class Schema @Inject()() {
 
   val name = Argument("name", StringType, description = "name of the character")
 
+  val MongoObjectIdType = Argument("oid", StringType, description = "mongobjectid")
+
   val EpisodeArg = Argument(
     "episode",
     OptionInputType(EpisodeEnum),
@@ -205,20 +187,35 @@ class Schema @Inject()() {
       Field(
         "human",
         OptionType(Human),
-        arguments = ID :: Nil,
-        resolve = ctx => ctx.ctx.cs.getHuman(ctx arg ID.toString)),
+        arguments = MongoObjectIdType :: Nil,
+        resolve = ctx => ctx.ctx.cs.getHuman(MongoObjectId(ctx.arg(MongoObjectIdType)))),
       Field(
         "droid",
         OptionType(Droid),
-        arguments = ID :: Nil,
-        resolve = Projector((ctx, f) => ctx.ctx.cs.getDroid(ctx arg ID.toString))),
+        arguments = MongoObjectIdType :: Nil,
+        resolve = Projector((ctx, f) => ctx.ctx.cs.getDroid(MongoObjectId(ctx.arg(MongoObjectIdType))))),
       Field(
         "jedi",
         OptionType(Jedi),
-        arguments = name :: Nil,
-        resolve = Projector((ctx, f) => ctx.ctx.cs.jediByName(ctx arg name)))
+        arguments = MongoObjectIdType :: Nil,
+        resolve = ctx => ctx.ctx.cs.getJedi(MongoObjectId(ctx.arg(MongoObjectIdType)))),
     )
   )
 
-  val StarWarsSchema = Schema(Query)
+  val NameArg = Argument("name", StringType)
+  val TypeArg = Argument("characterType", CharacterEnum)
+
+  val Mutation = ObjectType(
+    "Mutation",
+    fields[ApiRepo, Unit](
+      Field(
+        "create",
+        OptionType(Character),
+        arguments = NameArg :: TypeArg :: Nil,
+        resolve = c => c.ctx.cs.create(c.arg(NameArg), c.arg(TypeArg))
+      )
+    )
+  )
+
+  val StarWarsSchema = Schema(query = Query,mutation = Some(Mutation))
 }
