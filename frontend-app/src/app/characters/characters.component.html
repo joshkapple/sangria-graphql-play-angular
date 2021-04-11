@@ -1,0 +1,10 @@
+<p>characters works!</p>
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error">Error (: {{error}}...</div>
+<div *ngIf="characters">
+  <p>Here's a list of all the characters:</p>
+  <ul *ngFor="let character of characters">
+    <li>{{character.name}} | {{character.id}} | {{character.__typename}}</li>
+  </ul>
+</div>
+
