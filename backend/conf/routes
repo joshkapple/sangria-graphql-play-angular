@@ -5,13 +5,13 @@
 # Serve index page from public directory
 GET        /                     controllers.FrontendController.index()
 
-GET        /graphql              controllers.GraphQlController.graphql(query: String, variables: Option[String], operation: Option[String])
-POST       /graphql              controllers.GraphQlController.graphqlBody
-GET        /render-schema        controllers.GraphQlController.renderSchema
+GET        /api/graphql          controllers.GraphQlController.graphql(query: String, variables: Option[String], operation: Option[String])
+POST       /api/graphql          controllers.GraphQlController.graphqlBody
+GET        /api/render-schema    controllers.GraphQlController.renderSchema
 GET        /playground           controllers.GraphQlController.playground
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
 
 # Serve static assets under public directory
 GET     /*file                      controllers.FrontendController.assetOrDefault(file)
