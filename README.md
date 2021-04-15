@@ -19,6 +19,8 @@ See [Apollo Client generate types tutorial ](https://www.apollographql.com/blog/
     ./README.md                 # This readme file 
 
 ## Resources
-[Getting Started with Sangria](https://sangria-graphql.github.io/getting-started/)
-[Introduction Apollo Angular](https://apollo-angular.com/docs/)
-[Introduction to Graphql](https://graphql.org/learn/)
+[Getting Started with Sangria](https://sangria-graphql.github.io/getting-started/)  
+[Introduction Apollo Angular](https://apollo-angular.com/docs/)  
+[Introduction to Graphql](https://graphql.org/learn/)  
+[Play Angular Seed](https://github.com/yohangz/scala-play-angular-seed)    
+[Angular With Play Framework](https://blog.usejournal.com/https-medium-com-yohan-gz-angular-with-play-framework-a6c3f8b339f3)  

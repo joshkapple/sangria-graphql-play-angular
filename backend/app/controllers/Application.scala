@@ -12,7 +12,7 @@ class Application @Inject() (system: ActorSystem, config: Configuration) extends
   val googleAnalyticsCode = config.getOptional[String]("gaCode")
   val defaultGraphQLUrl = config.getOptional[String]("defaultGraphQLUrl").getOrElse(s"http://localhost:${config.getOptional[Int]("http.port").getOrElse(9000)}/graphql")
 
-  def index = Action {
+  def index(path: String) = Action {
     Ok(views.html.index(googleAnalyticsCode,defaultGraphQLUrl))
   }
 }
