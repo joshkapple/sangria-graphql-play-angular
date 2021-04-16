@@ -7,7 +7,7 @@ import {getAllCharacters_all} from "../graphql/__generated__/getAllCharacters";
 @Component({
   selector: 'app-characters',
   templateUrl: './characters.component.html',
-  styleUrls: ['./characters.component.css']
+  styleUrls: ['./characters.component.scss']
 })
 export class CharactersComponent implements OnInit {
   characters: getAllCharacters_all[] | undefined

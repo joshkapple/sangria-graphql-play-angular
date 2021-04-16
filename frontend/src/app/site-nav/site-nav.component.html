@@ -1,4 +1,15 @@
+
 <mat-toolbar color="primary">
-  <a mat-button routerLink=".">Home</a>
-  <a mat-button routerLink="/playground">Sangria Playground</a>
+  <mat-toolbar-row>
+    <span>Scala - Angular - Graphql</span>
+    <span class="toolbar-spacer2 fullmenu"></span>
+    <a mat-button routerLink="." class="fullmenu">Home</a>
+    <a mat-button routerLink="/playground" class="fullmenu">Sangria Playground</a>
+    <span class="toolbar-spacer"></span>
+    <button mat-button [matMenuTriggerFor]="menu" class="menubutton"><mat-icon>menu</mat-icon></button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item routerLink=".">Home</button>
+      <button mat-menu-item routerLink="/playground">Sangria Playground</button>
+    </mat-menu>
+  </mat-toolbar-row>
 </mat-toolbar>

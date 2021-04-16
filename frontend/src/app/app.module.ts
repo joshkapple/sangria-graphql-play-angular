@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import {Router, RouterModule} from '@angular/router';
 import { PlaygroundWrapperComponent } from './playground-wrapper/playground-wrapper.component';
 import { HomeComponent } from './home/home.component';
@@ -39,6 +40,7 @@ import { HomeComponent } from './home/home.component';
     MatSidenavModule,
     MatIconModule,
     MatListModule,
+    MatMenuModule,
     RouterModule,
   ],
   providers: [],
