@@ -1,3 +1,3 @@
-import {gql} from "@apollo/client/core";
+import {gql} from "@apollo/client/core"
 
-export const GET_ALL_CHARACTERS = gql`query getAllCharacters{all{name id}}`
+export const GET_ALL_CHARACTERS = gql`query characters{all{name id friends {name id} appearsIn}}`

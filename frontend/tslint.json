@@ -65,12 +65,11 @@
       "as-needed"
     ],
     "quotemark": [
-      true,
-      "single"
+      false
     ],
     "semicolon": {
       "options": [
-        "always"
+        "never"
       ]
     },
     "space-before-function-paren": {

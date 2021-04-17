@@ -2,7 +2,7 @@ module.exports = {
   client: {
     service: {
       name: 'sangria',
-      url: 'http://localhost:9000/graphql',
+      url: 'http://localhost:9000/api/graphql',
       // optional headers
       headers: {
         authorization: 'Bearer lkjfalkfjadkfjeopknavadf'

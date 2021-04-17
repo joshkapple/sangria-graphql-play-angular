@@ -1,10 +1,23 @@
-<p>characters works!</p>
-<div *ngIf="loading">Loading...</div>
-<div *ngIf="error">Error (: {{error}}...</div>
-<div *ngIf="characters">
-  <p>Here's a list of all the characters:</p>
-  <ul *ngFor="let character of characters">
-    <li>{{character.name}} | {{character.id}} | {{character.__typename}}</li>
-  </ul>
+<div class="content">
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error">Error (: {{error}}...</div>
+  <div *ngIf="characters">
+    <p>Here's a list of all the characters:</p>
+      <div fxLayout="row wrap" fxLayoutGap="10px grid">
+        <div fxFlex="25%" fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let character of characters">
+          <mat-card class="character-card">
+            <mat-card-header>
+              <div mat-card-avatar class="character-card-image"></div>
+              <mat-card-title>{{character.name}}</mat-card-title>
+              <mat-card-subtitle>{{character.__typename}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-actions>
+              <div fxFlex></div>
+              <button mat-button (click)="openDialog(character)"><mat-icon>delete</mat-icon></button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+    </div>
 </div>
 

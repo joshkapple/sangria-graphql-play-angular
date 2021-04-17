@@ -182,7 +182,6 @@ class Schema @Inject()() {
         "all",
         ListType(Character),
         arguments = Nil,
-        deprecationReason = Some("Use `human` or `droid` fields instead"),
         resolve = (ctx) => ctx.ctx.cs.all()),
       Field(
         "human",

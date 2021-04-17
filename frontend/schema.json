@@ -565,8 +565,8 @@
                 }
               }
             },
-            "isDeprecated": true,
-            "deprecationReason": "Use `human` or `droid` fields instead"
+            "isDeprecated": false,
+            "deprecationReason": null
           },
           {
             "name": "human",
