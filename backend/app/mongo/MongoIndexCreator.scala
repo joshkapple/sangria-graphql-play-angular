@@ -40,15 +40,20 @@ abstract class MongoIndexCreator(val reactiveMongoApi: ReactiveMongoApi)(implici
     service.collection(c => {
       for {db <- reactiveMongoApi.database
            _ = println(db.connection)
+           _ = db.collectionNames.foreach(cNames => println(cNames))
            _ <- db.collectionNames.flatMap {collections =>
              if (!collections.contains(collectionName)){
                println(s"creating ${collectionName}")
-               c.indexesManager.create(index(collectionName, Seq(("_id", IndexType.Ascending))))
-               c.indexesManager.ensure(index(collectionName, Seq(("_id", IndexType.Ascending))))
+               c.create().recover{ case _ => ()}
              } else {
                Future.successful(())
              }
            }
+          //indices <- c.indexesManager.list()
+          _ = {
+            c.indexesManager.create(index(collectionName, Seq(("_id", IndexType.Ascending))))
+            c.indexesManager.ensure(index(collectionName, Seq(("_id", IndexType.Ascending))))
+          }
       } yield {}
     })
   }
